@@ -1,9 +1,9 @@
-import React,{useState} from 'react';
+import React ,{useState, useEffect} from "react";
 import JobCard from './jobCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Loader from "react-loader-spinner";
-
+import axios from 'axios';
 const useStyles = makeStyles((theme) => ({
     loader:{
 marginTop:'8rem'
@@ -24,7 +24,7 @@ marginTop:'8rem'
     border:'4px solid 	#E5E5E5',
     width:'60%',
     margin:'1rem auto',
-    padding:'.5rem',
+    padding:'2rem',
     borderRadius:'5px',
     display:'flex',
     flexWrap:'wrap',
@@ -55,8 +55,32 @@ select:{
 
   }));
 
-const Findjobs = () => {
+const Findjobs = ({history}) => {
+  const [Data, setData] = useState([]);
+  
+  useEffect(() => {
+  const fetchData = async () => {
 
+  
+  
+
+      try {
+  
+   
+        const { data } = await axios.get('http://localhost:5000/api/Jobs/allJobs');
+        // console.log(localStorage.getItem("email"))
+        setData(data)
+      
+      } catch (error) {
+        console.log(error.response.data.error);
+        
+        // setError("");
+      }
+    };
+    fetchData();
+  },[history]);
+
+console.log(Data.allJobs)
     const classes = useStyles();
     const [select, setSelect] = useState("all");
 const [loader, setLoader] =useState(false);
@@ -123,25 +147,25 @@ const filterDelhi = () =>{
                />
                </div>
             ):
-            <div className={classes.jobs} >
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
-            <JobCard></JobCard>
+           
+            <div  className={classes.jobs} >
+             { Data.allJobs?.map((jobs, i) => (
+            <div key={i}>
+            <JobCard
+            clientId = {jobs.clientId}
+            clientName = {jobs.clientName}
+            gender = {jobs.gender}
+            jobName = {jobs.jobName}
+            location = {jobs.location}
+            salary = {jobs.salary}
+            shift = {jobs.shift}
+
+            />
             </div>
-        }
+      ))}
+            </div>
+          
+}
       
 
 
